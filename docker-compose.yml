@@ -1,0 +1,24 @@
+version: '2.0'
+
+services:
+  postgres-db:
+    image: postgres:9.6.8
+    command: postgres -c config_file=/etc/postgresql.conf
+    volumes:
+      - ./postgres-db/customPostgresql.conf:/etc/postgresql.conf
+  ros:
+    build: ./ros
+    command: npm start
+    ports:
+      - 9080:9080
+    volumes:
+      - ./ros/src:/usr/src/app/src
+      - ./ros/tsconfig.json:/usr/src/app/tsconfig.json
+  ros-adapter:
+    build: ./ros-adapter
+    command: npm start
+    volumes:
+      - ./ros-adapter/src:/usr/src/app/src
+    depends_on:
+      - postgres-db
+      - ros

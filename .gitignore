@@ -1,0 +1,7 @@
+node_modules
+dist
+*.realm
+*.realm.*
+realm-object-server
+data/
+docker-compose.override.yml
