@@ -1,11 +1,13 @@
 version: '2.0'
 
 services:
-  postgres-db:
-    image: postgres:9.6.8
+  postgres_db:
+    build: postgres_db
     command: postgres -c config_file=/etc/postgresql.conf
     volumes:
-      - ./postgres-db/customPostgresql.conf:/etc/postgresql.conf
+      # - ./postgres_db/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+      - ./postgres_db/postgresql.conf:/etc/postgresql.conf
+      - ./postgres_db/pg_hba.conf:/etc/pg_hba.conf
   ros:
     build: ./ros
     command: npm start
@@ -13,12 +15,14 @@ services:
       - 9080:9080
     volumes:
       - ./ros/src:/usr/src/app/src
+      - ./ros/data:/usr/src/app/data
       - ./ros/tsconfig.json:/usr/src/app/tsconfig.json
-  ros-adapter:
-    build: ./ros-adapter
+  ros_adapter:
+    build: ./ros_adapter
     command: npm start
     volumes:
-      - ./ros-adapter/src:/usr/src/app/src
+      - ./ros_adapter/src:/usr/src/app/src
+      - ./ros/data/keys:/usr/src/app/keys
     depends_on:
-      - postgres-db
+      - postgres_db
       - ros

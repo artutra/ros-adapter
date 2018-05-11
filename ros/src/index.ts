@@ -88,12 +88,10 @@ server.start({
     })
     .then(() => {
         console.log(`Realm Object Server was started on ${server.address}`)
-        // const dataPath = path.join(__dirname, '../data')
-        // console.log(dataPath)
-        // const adminTokenPath = path.resolve(dataPath, 'keys/admin.json')
-        // console.log(adminTokenPath)
-        // const adminTokenUser = require(adminTokenPath).ADMIN_TOKEN
-        // console.log(adminTokenUser)
+        const dataPath = path.join(__dirname, '../data')
+        const adminTokenPath = path.resolve(dataPath, 'keys/admin.json')
+        const adminTokenUser = require(adminTokenPath).ADMIN_TOKEN
+        console.log(adminTokenUser)
     })
     .catch(err => {
         console.error(`Error starting Realm Object Server: ${err.message}`)

@@ -8,6 +8,7 @@
     "author": "Your Name",
     "description": "My Cool Realm App",
     "dependencies":{
-        "realm": "^2.3.0"
+        "realm": "^2.4.0",
+        "realm-data-adapters": "^1.0.6"
     }
 }
