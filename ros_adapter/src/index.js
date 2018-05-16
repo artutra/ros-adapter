@@ -4,21 +4,23 @@ const path = require('path');
 const PostgresAdapter = require('realm-data-adapters').PostgresAdapter;
 
 var adminJson = require('../keys/admin.json')
-var REALM_OBJECT_SERVER_URL = process.env.ROS_URL ? process.env.ROS_URL : 'http://localhost:9080'
+var ROS_URL = process.env.ROS_URL ? process.env.ROS_URL : 'localhost'
+var ROS_PORT = process.env.ROS_PORT ? process.env.ROS_PORT : '9080'
 var FEATURE_TOKEN = process.env.FEATURE_TOKEN
 var DATABASE_NAME = 'ros_db'
 // Unlock Data Connector APIs
 // Realm.Sync.setAccessToken(FEATURE_TOKEN);
 
-console.log(REALM_OBJECT_SERVER_URL)
-const admin_user = Realm.Sync.User.adminUser(adminJson.ADMIN_TOKEN, REALM_OBJECT_SERVER_URL);
+console.log(ROS_URL)
+const admin_user = Realm.Sync.User.adminUser(adminJson.ADMIN_TOKEN, 'http://'+ROS_URL +':'+ ROS_PORT);
 
 // Print out uncaught exceptions
 process.on('uncaughtException', (err) => console.log(err));
+setTimeout(()=>{
 var adapter = new PostgresAdapter({
     // Realm configuration parameters for connecting to ROS
     realmConfig: {
-        server: REALM_OBJECT_SERVER_URL, // or specify your realm-object-server location
+        server: 'realm://'+ROS_URL+':'+ROS_PORT, // or specify your realm-object-server location
         user:   admin_user,
     },
     dbName: DATABASE_NAME,
@@ -33,8 +35,8 @@ var adapter = new PostgresAdapter({
 
 
     // Set to true to create the Postgres DB if not already created
-    createPostgresDB: true,
-    initializeRealmFromPostgres: false,
+    createPostgresDB: false,
+    initializeRealmFromPostgres: true,
     // Map of custom types to Postgres types
     /*customPostgresTypes: {
         'USER-DEFINED': 'text',
@@ -46,10 +48,10 @@ var adapter = new PostgresAdapter({
     // properties added to these tables based on schema additions
     // made in Realm. If set to false any desired changes to the
     // Postgres schema will need to be made external to the adapter.
-    applyRealmSchemaChangesToPostgres: true,
+    applyRealmSchemaChangesToPostgres: false,
 
     // Only match a single Realm called 'myRealm'
-    realmRegex: '~/private',
+    realmRegex: 'myRealm',
 
     // Specify the Realm name all Postgres changes should be applied to
     mapPostgresChangeToRealmPath: function(tableName, extraProps) {
@@ -58,13 +60,18 @@ var adapter = new PostgresAdapter({
     // Specify the Realm objects we want to replicate in Postgres.
     // Any types or properties not specified here will not be replicated
     schema: [{
-        name:       'TestObject',
+        name:       'disciplines',
         primaryKey: 'id',
         properties: {
-            id:     { type: 'string' },
-            number: { type: 'int', optional: true },
+            id:     { type: 'int' },
+            name: { type: 'string', optional: true },
+            created_at: { type: 'date', optional: true },
+            updated_at: { type: 'date', optional: true },
+            deleted_at: { type: 'date', optional: true },
         },
     }],
 
     printCommandsToConsole: true,
 });
+
+}, 10000)
