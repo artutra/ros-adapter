@@ -5,3 +5,5 @@ dist
 realm-object-server
 data/
 docker-compose.override.yml
+postgres_db/data
+postgres_db/dbexport.pgsql
